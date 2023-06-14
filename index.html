@@ -1,0 +1,265 @@
+<html>
+  <head>
+    <title>ink.gen</title>
+    <meta charset="UTF-8">
+    <style>
+      body {
+        background-color: #ffffff;
+        font-family: sans-serif, bold;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .canvas-container {
+        max-height: 90vh;
+      }
+
+      canvas {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        font-family: 'Roboto Condensed', sans-serif, bold;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .mandala-row {
+        display: flex;
+        gap: 40px;
+      }
+
+      .mandala-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+        max-height: 800px;
+        width: 240px;
+      }
+
+      .mandala-thumbnail {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        cursor: pointer;
+      }
+
+      .mandala-preview {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="button-container">
+        <input type="file" id="imageInput" accept="image/*" onchange="loadImage(event)">
+        <button onclick="generateMandala()">Generate Mandala</button>
+        <div>
+          <label for="numPointsInput">Number of Points: </label>
+          <input type="number" id="numPointsInput" min="3" max="360" value="5">
+          <button onclick="updatePoints()">Update</button>
+        </div>
+        <button onclick="downloadImage()">Download</button>
+      </div>
+
+      <div class="mandala-row">
+        <div class="mandala-list" id="mandalaList"></div>
+        <img id="mainImage" width="800px" height="800px"/>
+      </div>
+    </div>
+    <canvas id="buffer" width="3300px" height="3300px" style="display: none;"></canvas>
+
+    <script>
+      var canvasElement = document.getElementById("canvas");
+      var bufferElement = document.getElementById("buffer");
+      var bufferCtx = bufferElement.getContext("2d");
+
+      var mainImage = document.getElementById('mainImage');
+
+      var image = new Image();
+      var currentImage = null;
+
+      var numPointsInput = document.getElementById('numPointsInput');
+      var numPoints = parseInt(numPointsInput.value);
+      var angleIncrement = (360 / numPoints) / 2;
+      var mandalaListElement = document.getElementById("mandalaList");
+      var mandalaImages = [];
+
+      function loadImage(event) {
+        var input = event.target;
+        if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+              image = scaleAndCropImage(img, bufferElement.width, bufferElement.height);
+              image.onload = function() {
+                generateMandala();
+                saveMandala(image);
+              };
+            };
+          };
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      function scaleAndCropImage(img, width, height) {
+        var aspectRatio = img.width / img.height;
+        var targetAspectRatio = width / height;
+        var scaledWidth, scaledHeight, dx, dy;
+
+        if (aspectRatio > targetAspectRatio) {
+          scaledWidth = width;
+          scaledHeight = width / aspectRatio;
+          dx = 0;
+          dy = (height - scaledHeight) / 2;
+        } else {
+          scaledWidth = height * aspectRatio;
+          scaledHeight = height;
+          dx = (width - scaledWidth) / 2;
+          dy = 0;
+        }
+
+        bufferCtx.clearRect(0, 0, width, height);
+        bufferCtx.drawImage(img, dx, dy, scaledWidth, scaledHeight);
+        var scaledImage = new Image();
+        scaledImage.src = bufferElement.toDataURL('image/png', 1);
+        return scaledImage;
+      }
+
+      function generateMandala() {
+        var sliceImage   = new Image();
+        var flippedImage = new Image();
+        currentImage = image;
+
+        function drawSlice(degrees) {
+          var angleOffset = Math.floor(Math.random() * 360) + 1;
+          var translationOffset = Math.floor(Math.random() * 800);
+
+          // Rotate around the center
+          bufferCtx.clearRect(0, 0, bufferElement.width, bufferElement.height);
+          bufferCtx.save();
+          bufferCtx.translate(bufferElement.width / 2 + translationOffset, bufferElement.height / 2);
+          bufferCtx.rotate((angleOffset + degrees) * Math.PI / 180);
+          bufferCtx.drawImage(currentImage, -currentImage.width / 2, -currentImage.height / 2);
+          bufferCtx.restore();
+
+          bufferCtx.clearRect(0, 0, bufferElement.width / 2, bufferElement.height);
+
+          sliceImage.src = bufferElement.toDataURL('image/png', 1);
+
+          sliceImage.onload = function() {
+            // Rotate back
+            bufferCtx.clearRect(0, 0, bufferElement.width, bufferElement.height);
+            bufferCtx.save();
+            bufferCtx.translate(sliceImage.width / 2, sliceImage.height / 2);
+            bufferCtx.rotate(-degrees * Math.PI / 180);
+            bufferCtx.drawImage(sliceImage, -sliceImage.width / 2, -sliceImage.height / 2);
+            bufferCtx.restore();
+            bufferCtx.clearRect(bufferElement.width / 2, 0, bufferElement.width / 2, bufferElement.height);
+
+            currentImage = sliceImage;
+
+            flippedImage.src = bufferElement.toDataURL('image/png', 1);
+
+            // Flip horizontally and duplicate
+            flippedImage.onload = function() {
+              bufferCtx.clearRect(0, 0, bufferElement.width, bufferElement.height);
+              bufferCtx.drawImage(flippedImage, 0, 0);
+              bufferCtx.save();
+              bufferCtx.translate(bufferElement.width, 0);
+              bufferCtx.scale(-1, 1);
+              bufferCtx.drawImage(flippedImage, 0, 0, bufferElement.width / 2, bufferElement.height, 0, 0, bufferElement.width / 2, bufferElement.height);
+              bufferCtx.restore();
+
+              var bufferedImage = new Image();
+              bufferedImage.src = bufferElement.toDataURL('image/png', 1);
+
+              bufferedImage.onload = function() {
+                bufferCtx.clearRect(0, 0, bufferElement.width, bufferElement.height);
+                bufferCtx.drawImage(bufferedImage, 0, 0, bufferElement.width, bufferElement.height);
+
+                currentImage = bufferedImage;
+
+                var repetitionImage = new Image();
+                repetitionImage.src = bufferElement.toDataURL('image/png', 1);
+
+                repetitionImage.onload = function() {
+                  bufferCtx.clearRect(0, 0, bufferElement.width, bufferElement.height);
+
+                  bufferCtx.save();
+                  bufferCtx.translate(bufferElement.width / 2, bufferElement.height / 2);
+
+                  for (var i = 0; i < (360 / angleIncrement); i++) {
+                    bufferCtx.rotate((angleIncrement * 2) * Math.PI / 180);
+                    bufferCtx.drawImage(repetitionImage, -currentImage.width / 2, -currentImage.height / 2);
+                  }
+
+                  bufferCtx.restore();
+
+                  var finalImage = new Image();
+                  finalImage.src = bufferElement.toDataURL('image/png', 1);
+
+                  finalImage.onload = function() {
+                    mainImage.src = finalImage.src;
+                    saveMandala(finalImage);
+                  };
+                };
+              };
+            };
+          };
+        }
+
+        drawSlice(angleIncrement);
+      }
+
+      function updatePoints() {
+        var pointsInput = document.getElementById('numPointsInput');
+        var newNumPoints = parseInt(pointsInput.value);
+        if (!isNaN(newNumPoints) && newNumPoints >= 3) {
+          numPoints = newNumPoints;
+          angleIncrement = (360 / numPoints) / 2;
+          generateMandala();
+        } else {
+          pointsInput.value = numPoints;
+          alert('Please enter a valid number of points (minimum 3).');
+        }
+      }
+
+      function saveMandala(image) {
+        var thumbnailImage = document.createElement('img');
+        thumbnailImage.src = image.src;
+        thumbnailImage.classList.add('mandala-thumbnail');
+        thumbnailImage.onclick = function() {
+          loadMandala(image);
+        };
+        mandalaImages.push(thumbnailImage);
+        mandalaListElement.insertBefore(thumbnailImage, mandalaListElement.firstChild);
+      }
+
+      function loadMandala(image) {
+        mainImage.src = image.src;
+      }
+
+      function downloadImage() {
+        var link = document.createElement('a');
+        link.href = mainImage.src;
+        link.download = 'mandala.png';
+        link.click();
+      }
+    </script>
+
+  </body>
+</html>
