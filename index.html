@@ -198,6 +198,8 @@
 
                 repetitionImage.onload = function() {
                   bufferCtx.clearRect(0, 0, bufferElement.width, bufferElement.height);
+                  bufferCtx.fillStyle = 'white';
+                  bufferCtx.fillRect(0, 0, bufferElement.width, bufferElement.height);
 
                   bufferCtx.save();
                   bufferCtx.translate(bufferElement.width / 2, bufferElement.height / 2);
