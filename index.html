@@ -42,12 +42,14 @@
         width: 240px;
         position: absolute;
         left: -260;
-        border-top: 1px solid #a2737b;
-        border-bottom: 1px solid #a2737b;
+        border-top: 2px solid #a2737b;
+        border-bottom: 2px solid #a2737b;
         padding-top: 12px;
         padding-bottom: 12px;
         box-sizing: border-box;
         align-items: center;
+
+        visibility: hidden;
       }
 
       .mandala-list::-webkit-scrollbar {
@@ -67,8 +69,8 @@
         max-width: 200px;
         object-fit: cover;
         cursor: pointer;
-        border-radius: 16px;
-        border: 1px solid #a2737b;
+        border-radius: 100%;
+        border: 2px solid #a2737b;
         box-shadow: 0 4px #8d3d633a;
       }
 
@@ -82,8 +84,9 @@
         width: 800px;
         height: 800px;
         background-color: #ffffff70;
-        border-radius: 24px;
-        border: 1px solid #a2737b;
+        border-radius: 100%;
+        border: 2px solid #a2737b;
+        box-shadow: 0 0 40px 20px #ffffff30;
       }
 
       h2 {
@@ -130,19 +133,23 @@
 
     <script>
       var bufferElement = document.getElementById("buffer");
-      var bufferCtx = bufferElement.getContext("2d");
+      var buffer        = bufferElement.getContext("2d");
+      var bufferWidth   = bufferElement.width;
+      var bufferHeight  = bufferElement.height;
 
-      var mainImage = document.getElementById('mainImage');
-      var currentImage = null;
+
+      var mainImage     = document.getElementById('mainImage');
+      var currentImage  = null;
 
       var numPointsInput = document.getElementById('numPointsInput');
-      var numPoints = parseInt(numPointsInput.value);
-      var angleIncrement = (360 / numPoints) / 2;
-      var mandalaListElement = document.getElementById("mandalaList");
-      var mandalaImages = [];
+      var uploadButton   = document.getElementById('uploadButton');
+      var imageInput     = document.getElementById('imageInput');
 
-      var uploadButton = document.getElementById('uploadButton');
-      var imageInput = document.getElementById('imageInput');
+      var mandalaList    = document.getElementById("mandalaList");
+      var mandalaImages  = [];
+
+      var numPoints      = parseInt(numPointsInput.value);
+      var angleIncrement = (360 / numPoints) / 2;
 
       uploadButton.addEventListener('click', function() {
         imageInput.click();
@@ -164,10 +171,12 @@
             img.src = e.target.result;
 
             img.onload = function() {
-              image = scaleAndCropImage(img, bufferElement.width, bufferElement.height);
+              image = imageHandle.scaleAndCropImage(img, bufferElement.width, bufferElement.height);
               image.onload = function() {
-                generateMandala();
                 saveMandala(image);
+                mandalaList.style = "visibility: visible";
+
+                generateMandala();
               };
             };
           };
@@ -176,118 +185,174 @@
         }
       };
 
-      var scaleAndCropImage = function(img, width, height) {
-        var aspectRatio = img.width / img.height;
-        var targetAspectRatio = width / height;
-        var scaledWidth, scaledHeight, dx, dy;
+      var imageHandle = {
+        rotate: function(d, a, t) {
+          buffer.clearRect(0, 0, bufferWidth, bufferHeight);
+          buffer.save();
+          buffer.translate(bufferWidth / 2 + t, bufferHeight / 2);
+          buffer.rotate((a + d) * Math.PI / 180);
+          buffer.drawImage(currentImage, -currentImage.width / 2, -currentImage.height / 2);
+          buffer.restore();
 
-        if (aspectRatio > targetAspectRatio) {
-          scaledWidth = width;
-          scaledHeight = width / aspectRatio;
-          dx = 0;
-          dy = (height - scaledHeight) / 2;
-        } else {
-          scaledWidth = height * aspectRatio;
-          scaledHeight = height;
-          dx = (width - scaledWidth) / 2;
-          dy = 0;
+          buffer.clearRect(0, 0, bufferWidth / 2, bufferHeight);
+        },
+        halfSlice: function(img, d) {
+          buffer.clearRect(0, 0, bufferWidth, bufferHeight);
+          buffer.save();
+          buffer.translate(img.width / 2, img.height / 2);
+          buffer.rotate(-d * Math.PI / 180);
+          buffer.drawImage(img, -img.width / 2, -img.height / 2);
+          buffer.restore();
+          buffer.clearRect(bufferWidth / 2, 0, bufferWidth / 2, bufferHeight);
+        },
+        fullSlice: function(img) {
+          buffer.clearRect(0, 0, bufferWidth, bufferHeight);
+          buffer.drawImage(img, 0, 0);
+          buffer.save();
+          buffer.translate(bufferWidth, 0);
+          buffer.scale(-1, 1);
+          buffer.drawImage(img, 0, 0, bufferWidth / 2, bufferHeight, 0, 0, bufferWidth / 2, bufferHeight);
+          buffer.restore();
+        },
+
+        scaleAndCropImage: function(img, width, height) {
+          var aspectRatio = img.width / img.height;
+          var scaledWidth, scaledHeight, dx, dy;
+
+          if (img.width > img.height) {
+            scaledWidth = height * (img.width / img.height);
+            scaledHeight = height;
+            dx = (width - scaledWidth) / 2;
+            dy = 0;
+          } else {
+            scaledWidth  = width;
+            scaledHeight = width * (img.height / img.width);
+            dx = 0;
+            dy = (height - scaledHeight) / 2;
+          }
+
+          buffer.clearRect(0, 0, width, height);
+          buffer.drawImage(img, dx, dy, scaledWidth, scaledHeight);
+
+          var scaledImage = new Image();
+          scaledImage.src = bufferElement.toDataURL('image/png', 1);
+
+          return scaledImage;
+        },
+        cropToCircle: function(image) {
+          var size = image.width + 10;
+          bufferElement.width = size;
+          bufferElement.height = size;
+
+          buffer.beginPath();
+          buffer.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI);
+          buffer.closePath();
+          buffer.clip();
+
+          buffer.clearRect(0, 0, bufferWidth, bufferHeight);
+          buffer.drawImage(image, 0, 0, size, size);
+
+          var croppedImage = new Image();
+          croppedImage.src = bufferElement.toDataURL('image/png', 1);
+
+          return croppedImage;
         }
-
-        bufferCtx.clearRect(0, 0, width, height);
-        bufferCtx.drawImage(img, dx, dy, scaledWidth, scaledHeight);
-
-        var scaledImage = new Image();
-        scaledImage.src = bufferElement.toDataURL('image/png', 1);
-
-        return scaledImage;
       };
 
       var generateMandala = function() {
         var sliceImage = new Image();
         var flippedImage = new Image();
-        currentImage = image;
         var repetitionImage = null;
+        currentImage = image;
+
+        bufferElement.width = 3300;
+        bufferElement.height = 3300;
 
         var drawSlice = function(degrees) {
           var angleOffset = Math.floor(Math.random() * 360) + 1;
-          var translationOffset = Math.floor(Math.random() * 800);
-          var bufferWidth = bufferElement.width;
-          var bufferHeight = bufferElement.height;
+          var translationOffset = Math.floor(Math.random() * (currentImage.width * 0.1));
 
-          // Rotate around the center
-          bufferCtx.clearRect(0, 0, bufferWidth, bufferHeight);
-          bufferCtx.save();
-          bufferCtx.translate(bufferWidth / 2 + translationOffset, bufferHeight / 2);
-          bufferCtx.rotate((angleOffset + degrees) * Math.PI / 180);
-          bufferCtx.drawImage(currentImage, -currentImage.width / 2, -currentImage.height / 2);
-          bufferCtx.restore();
+          imageHandle.rotate(degrees, angleOffset, translationOffset);
 
-          bufferCtx.clearRect(0, 0, bufferWidth / 2, bufferHeight);
           sliceImage.src = bufferElement.toDataURL('image/png', 1);
-
           sliceImage.onload = function() {
-            // Rotate back
-            bufferCtx.clearRect(0, 0, bufferWidth, bufferHeight);
-            bufferCtx.save();
-            bufferCtx.translate(sliceImage.width / 2, sliceImage.height / 2);
-            bufferCtx.rotate(-degrees * Math.PI / 180);
-            bufferCtx.drawImage(sliceImage, -sliceImage.width / 2, -sliceImage.height / 2);
-            bufferCtx.restore();
-            bufferCtx.clearRect(bufferWidth / 2, 0, bufferWidth / 2, bufferHeight);
+            imageHandle.halfSlice(sliceImage, degrees);
 
-            currentImage = sliceImage;
             flippedImage.src = bufferElement.toDataURL('image/png', 1);
-
-            // Flip horizontally and duplicate
-            flippedImage.onload = function() {
-              bufferCtx.clearRect(0, 0, bufferWidth, bufferHeight);
-              bufferCtx.drawImage(flippedImage, 0, 0);
-              bufferCtx.save();
-              bufferCtx.translate(bufferWidth, 0);
-              bufferCtx.scale(-1, 1);
-              bufferCtx.drawImage(flippedImage, 0, 0, bufferWidth / 2, bufferHeight, 0, 0, bufferWidth / 2, bufferHeight);
-              bufferCtx.restore();
-
-              var bufferedImage = new Image();
-              bufferedImage.src = bufferElement.toDataURL('image/png', 1);
-
-              bufferedImage.onload = function() {
-                bufferCtx.clearRect(0, 0, bufferWidth, bufferHeight);
-                bufferCtx.drawImage(bufferedImage, 0, 0, bufferWidth, bufferHeight);
-                currentImage = bufferedImage;
-
-                if (!repetitionImage) {
-                  repetitionImage = new Image();
-                  repetitionImage.src = bufferElement.toDataURL('image/png', 1);
-                }
-
-                bufferCtx.clearRect(0, 0, bufferWidth, bufferHeight);
-                bufferCtx.fillStyle = 'white';
-                bufferCtx.fillRect(0, 0, bufferWidth, bufferHeight);
-
-                bufferCtx.save();
-                bufferCtx.translate(bufferWidth / 2, bufferHeight / 2);
-
-                for (var i = 0; i < (360 / angleIncrement); i++) {
-                  bufferCtx.rotate((angleIncrement * 2) * Math.PI / 180);
-                  bufferCtx.drawImage(repetitionImage, -currentImage.width / 2, -currentImage.height / 2);
-                }
-
-                bufferCtx.restore();
-
-                var finalImage = new Image();
-                finalImage.src = bufferElement.toDataURL('image/png', 1);
-
-                finalImage.onload = function() {
-                  mainImage.src = finalImage.src;
-                  saveMandala(finalImage);
-                };
-              };
-            };
+            flippedImage.onload = processFlippedImage;
           };
         };
 
+        var processFlippedImage = function() {
+          imageHandle.fullSlice(flippedImage);
+
+          var fullSlice = new Image();
+          fullSlice.src = bufferElement.toDataURL('image/png', 1);
+          fullSlice.onload = processFullSlice.bind(null, fullSlice);
+        };
+
+        var processFullSlice = function(fullSlice) {
+          buffer.clearRect(0, 0, bufferWidth, bufferHeight);
+          buffer.drawImage(fullSlice, 0, 0, bufferWidth, bufferHeight);
+
+          if (!repetitionImage) {
+            repetitionImage = new Image();
+            repetitionImage.src = bufferElement.toDataURL('image/png', 1);
+          }
+
+          buffer.clearRect(0, 0, bufferWidth, bufferHeight);
+          buffer.fillStyle = 'white';
+          buffer.fillRect(0, 0, bufferWidth, bufferHeight);
+
+          buffer.save();
+          buffer.translate(bufferWidth / 2, bufferHeight / 2);
+
+          for (var i = 0; i < (360 / angleIncrement); i++) {
+            buffer.rotate((angleIncrement * 2) * Math.PI / 180);
+            buffer.drawImage(repetitionImage, -fullSlice.width / 2, -fullSlice.height / 2);
+          }
+
+          buffer.restore();
+
+          var finalImage = new Image();
+          finalImage.src = bufferElement.toDataURL('image/png', 1);
+          finalImage.onload = processFinalImage.bind(null, finalImage);
+        };
+
+        var processFinalImage = function(finalImage) {
+          var croppedImage = imageHandle.cropToCircle(finalImage);
+          mainImage.src = croppedImage.src;
+          saveMandala(croppedImage);
+        };
+
         drawSlice(angleIncrement);
+      };
+
+      var saveMandala = function(image) {
+        var thumbnailImage = document.createElement('img');
+
+        thumbnailImage.src = image.src;
+        thumbnailImage.classList.add('mandala-thumbnail');
+
+        thumbnailImage.onclick = function() {
+          loadMandala(image);
+        };
+
+        mandalaImages.push(thumbnailImage);
+        mandalaList.insertBefore(thumbnailImage, mandalaList.firstChild);
+      };
+
+      var loadMandala = function(image) {
+        mainImage.src = image.src;
+      };
+
+      var downloadImage = function() {
+        var link = document.createElement('a');
+
+        link.href = mainImage.src;
+        link.download = 'mandala.png';
+
+        link.click();
       };
 
       var updatePoints = function() {
@@ -306,32 +371,6 @@
         }
       };
 
-      var saveMandala = function(image) {
-        var thumbnailImage = document.createElement('img');
-
-        thumbnailImage.src = image.src;
-        thumbnailImage.classList.add('mandala-thumbnail');
-
-        thumbnailImage.onclick = function() {
-          loadMandala(image);
-        };
-
-        mandalaImages.push(thumbnailImage);
-        mandalaListElement.insertBefore(thumbnailImage, mandalaListElement.firstChild);
-      };
-
-      var loadMandala = function(image) {
-        mainImage.src = image.src;
-      };
-
-      var downloadImage = function() {
-        var link = document.createElement('a');
-
-        link.href = mainImage.src;
-        link.download = 'mandala.png';
-
-        link.click();
-      };
     </script>
 
   </body>
