@@ -1,0 +1,48 @@
+{
+  "name": "inkgen",
+  "homepage": "https://ryananger.github.io/inkgen",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Ry Scott",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "webpack --mode=development -w",
+    "dev": "webpack serve --open",
+    "server": "node server/index.js -w"
+  },
+  "dependencies": {
+    "babel-plugin-file-loader": "^2.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.18.2",
+    "file-loader": "^6.2.0",
+    "firebase": "^9.16.0",
+    "firebaseui": "^6.0.2",
+    "mongoose": "^6.8.3",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "axios": "^1.2.2",
+    "babel-loader": "^9.1.0",
+    "css-loader": "^6.7.2",
+    "date-fns": "^2.29.3",
+    "dotenv-webpack": "^8.0.1",
+    "gh-pages": "^5.0.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-server": "^4.11.1"
+  }
+}

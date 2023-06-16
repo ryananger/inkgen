@@ -1,0 +1,132 @@
+html, #root, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: linear-gradient(to top, #ffe8ec 60%, #fff5f5);
+  font-family: sans-serif, bold;
+  font-size: small;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.mandalaList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 800px;
+  width: 240px;
+  position: absolute;
+  left: -260px;
+  border-top: 2px solid #a2737b;
+  border-bottom: 2px solid #a2737b;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.mandalaList::-webkit-scrollbar {
+  background: none;
+  border-style: none;
+  width: 0.4vw;
+  min-width: 6px;
+}
+
+.mandalaList::-webkit-scrollbar-thumb {
+  border-radius: 16px;
+  background: #fc68ad3a;
+  border: 1px solid #a2737b;
+}
+
+.mandala-thumbnail {
+  max-width: 200px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 100%;
+  border: 2px solid #a2737b;
+  box-shadow: 0 4px #8d3d633a;
+}
+
+.mandala-preview {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+#mainImage {
+  width: 800px;
+  height: 800px;
+  background-color: #ffffff70;
+  border-radius: 100%;
+  border: 2px solid #a2737b;
+  box-shadow: 0 0 40px 20px #ffffff30;
+}
+
+.nav {
+  display: flex;
+  flex: auto;
+  align-items: baseline;
+  margin: 8px;
+}
+
+h2 {
+  margin: 0;
+  margin-right: 20px;
+  color: #8f5861;
+}
+
+input, button {
+  border-radius: 8px;
+  border: 1px solid #a2737b;
+  margin-right: 4px;
+  height: 24px;
+  outline: none;
+}
+
+button {
+  background-color: #fc68ad24;
+  cursor: pointer;
+
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: rgb(189 245 198);
+}
+
+.ready:hover {
+  background-color: rgb(189 245 198);
+}
+
+.notReady {
+  background-color: #e4d0d4;
+}
+
+.notReady:hover {
+  background-color: #e4d0d4;
+}
+
+input {
+  background-color: white;
+  padding: 0;
+  padding-left: 2px;
+  box-sizing: border-box;
+}
+
+#sizeInput {
+  width: 48px;
+}
