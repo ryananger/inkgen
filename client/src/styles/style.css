@@ -5,7 +5,7 @@ html, #root, body {
 
 body {
   background: linear-gradient(to top, #ffe8ec 60%, #fff5f5);
-  font-family: sans-serif, bold;
+  font-family: Jost, Roboto, sans-serif, bold;
   font-size: small;
 }
 
@@ -21,7 +21,11 @@ body {
   justify-content: center;
 }
 
-.mandalaList {
+.mainContainer {
+  display: flex;
+}
+
+.mandalaList, .infoContainer {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -29,14 +33,20 @@ body {
   overflow-x: hidden;
   height: 800px;
   width: 240px;
-  position: absolute;
-  left: -260px;
   border-top: 2px solid #a2737b;
   border-bottom: 2px solid #a2737b;
   padding-top: 12px;
   padding-bottom: 12px;
   box-sizing: border-box;
   align-items: center;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #8f5861;
+}
+
+.infoContainer {
+  justify-content: space-between;
 }
 
 .mandalaList::-webkit-scrollbar {
@@ -89,7 +99,13 @@ h2 {
   color: #8f5861;
 }
 
+a {
+  font-size: 20px;
+  color: #8f5861;
+}
+
 input, button {
+  font-family: Jost, Roboto, sans-serif, bold;
   border-radius: 8px;
   border: 1px solid #a2737b;
   margin-right: 4px;

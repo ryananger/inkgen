@@ -6,12 +6,14 @@ const App = function() {
   const [points, setPoints] = useState(5);
   const [angle, setAngle]   = useState((360/points)/2);
   const [mandalaImages, setMandalaImages]     = useState([]);
+  const [rawImage, setRawImage]               = useState(null);
   const [currentImage, setCurrentImage]       = useState(null);
   const [mainImageSource, setMainImageSource] = useState("https://i.imgur.com/ArMb4g8.png");
 
   const [ready, setReady] = useState(false);
+  const [auto, setAuto]   = useState(false);
 
-  const [bufferSize, setBufferSize] = useState(1200);
+  const [bufferSize, setBufferSize] = useState(1800);
 
   var sliceImage   = new Image();
   var flippedImage = new Image();
@@ -34,6 +36,8 @@ const App = function() {
 
       reader.onload = function(e) {
         var img = new Image();
+
+        setRawImage(e.target.result);
 
         handleBlob(e.target.result, img, function() {
           imageHandle.scaleAndCropImage(img, bufferElement.width, bufferElement.height);
@@ -70,7 +74,11 @@ const App = function() {
     if (newSize && newSize >= 800 && newSize <= 3300) {
       setBufferSize(newSize);
 
-      imageHandle.scaleAndCropImage(currentImage, newSize, newSize);
+      var img = new Image();
+
+      handleBlob(rawImage, img, function() {
+        imageHandle.scaleAndCropImage(img, bufferElement.width, bufferElement.height);
+      });
     } else {
       alert('Please enter a number between 800 and 3300.');
     }
@@ -245,6 +253,12 @@ const App = function() {
       });
   };
 
+  useEffect(()=>{
+    if (ready && auto) {
+      generateMandala();
+    }
+  }, [ready]);
+
   return (
     <div className="container">
       <div className="nav">
@@ -258,14 +272,36 @@ const App = function() {
           <input id="sizeInput" defaultValue={bufferSize}/>
           <button onClick={updateSize}>Update</button>
           <button onClick={generateMandala} className={ready ? 'ready' : 'notReady'}>Generate Mandala</button>
+          <button onClick={()=>{setAuto(!auto)}} style={auto ? {backgroundColor: '#bdf5c6'} : {backgroundColor: '#ffb7b7'}}>Auto</button>
           <button onClick={downloadImage}>Download</button>
         </div>
       </div>
-      <div style={{position: 'relative'}}>
-        <div className="mandalaList" style={mandalaImages.length > 0 ? {visibility: 'visible'} : {visibility: 'hidden'}}>
+      <div className='mainContainer'>
+        <div className="mandalaList">
           {renderMandalaList()}
+          {mandalaImages.length === 0 && 'Your images will appear here. You can click to load them into the main viewer.'}
         </div>
         <img id="mainImage" src={mainImageSource}/>
+        <div className="infoContainer">
+          <div>
+            Load an image, set the desired number of points, and generate a 'mandala' (defined loosely) from your image. Hi-res square images work best.
+            <br/><br/>
+            Turn on Auto to automatically generate images.
+            <br/><br/>
+            <small>Reduce size to improve performance.</small>
+          </div>
+          <div>
+            <a href='https://instagram.com/ink.vessels'>ink.vessels</a>
+            <br/><br/>
+            <small>
+              I like making things. Sometimes, I like to make things faster so I'll make another thing to make that easier.
+              <br/><br/>
+              This is one of those things.
+              <br/><br/>
+              I hope you find it useful, enjoyable, or inspiring.
+            </small>
+          </div>
+        </div>
       </div>
     </div>
   )
