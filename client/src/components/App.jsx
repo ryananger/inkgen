@@ -60,6 +60,8 @@ const App = function() {
   var updatePoints = function() {
     var newPoints = document.getElementById('numPointsInput').value;
 
+    if (!newPoints) {return};
+
     if (Number(newPoints) && newPoints >= 3 && newPoints <= 360) {
       setPoints(newPoints);
       setAngle((360/newPoints)/2);
