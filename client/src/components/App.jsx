@@ -269,7 +269,7 @@ const App = function() {
           Points:
           <input type="tel" id="numPointsInput" defaultValue="5" onChange={updatePoints}/>
           Size:
-          <input id="sizeInput" defaultValue={bufferSize}/>
+          <input type="tel" id="sizeInput" defaultValue={bufferSize}/>
           <button onClick={updateSize}>Update</button>
         </div>
         <div>
@@ -308,6 +308,7 @@ const App = function() {
             </small>
           </div>
         </div>
+        <br/>
       </div>
     </div>
   )
