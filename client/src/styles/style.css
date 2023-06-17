@@ -13,7 +13,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  background: linear-gradient(to top, #ffe8ec 60%, #fff5f5);
 }
 
 .button-container {
@@ -25,7 +25,8 @@ body {
   display: flex;
 }
 
-.mandalaList, .infoContainer {
+.mandalaList,
+.infoContainer {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -54,6 +55,7 @@ body {
   border-style: none;
   width: 0.4vw;
   min-width: 6px;
+  max-height: 8px;
 }
 
 .mandalaList::-webkit-scrollbar-thumb {
@@ -90,11 +92,13 @@ body {
   display: flex;
   flex: auto;
   align-items: baseline;
-  margin: 8px;
+  margin: 4px;
+  margin-bottom: 24px;
 }
 
 h2 {
   margin: 0;
+  margin-top: 4px;
   margin-right: 20px;
   color: #8f5861;
 }
@@ -104,19 +108,24 @@ a {
   color: #8f5861;
 }
 
-input, button {
+input,
+button {
   font-family: Jost, Roboto, sans-serif, bold;
   border-radius: 8px;
   border: 1px solid #a2737b;
   margin-right: 4px;
   height: 24px;
   outline: none;
+  text-align: center;
+}
+
+#sizeInput {
+  width: 48px;
 }
 
 button {
   background-color: #fc68ad24;
   cursor: pointer;
-
   transition: background-color 0.2s;
 }
 
@@ -136,13 +145,66 @@ button:hover {
   background-color: #e4d0d4;
 }
 
-input {
-  background-color: white;
-  padding: 0;
-  padding-left: 2px;
-  box-sizing: border-box;
-}
+/* Mobile Styling */
 
-#sizeInput {
-  width: 48px;
+@media (max-width: 600px) {
+  body {
+    font-family: Roboto, sans-serif, bold;
+  }
+
+  .mainContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #uploadButton {
+    margin-right: 0;
+  }
+
+  h2 {
+    margin-right: 0;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    width: 90%;
+    align-items: center;
+    margin: 8px;
+  }
+
+  .nav > * {
+    margin-bottom: 4px;
+  }
+
+  .mandalaList,
+  .infoContainer {
+    width: 100%;
+    max-height: unset;
+    height: auto;
+  }
+
+  .infoContainer > * {
+    padding: 12px;
+  }
+
+  .mandalaList {
+    flex-direction: row;
+    width: 100vw;
+    height: 120px;
+    overflow: auto;
+    overflow-y: hidden;
+    padding: 4px;
+  }
+
+  .mandala-thumbnail {
+    height: 80px;
+  }
+
+  #mainImage {
+    width: 320px;
+    height: 320px;
+    margin: 12px;
+  }
 }

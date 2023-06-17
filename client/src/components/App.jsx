@@ -261,20 +261,23 @@ const App = function() {
 
   return (
     <div className="container">
+      <h2>ink.gen</h2>
       <div className="nav">
-        <h2>ink.gen</h2>
+        <button id="uploadButton" onClick={()=>{document.getElementById('imageInput').click()}}>Load Image</button>
+        <input type="file" id="imageInput" style={{display: 'none'}} onChange={loadImage}/>
         <div>
-          <button id="uploadButton" onClick={()=>{document.getElementById('imageInput').click()}}>Load Image</button>
-          <input type="file" id="imageInput" style={{display: 'none'}} onChange={loadImage}/>
           Points:
           <input type="number" id="numPointsInput" min="3" max="360" defaultValue="5" onChange={updatePoints}/>
           Size:
           <input id="sizeInput" defaultValue={bufferSize}/>
           <button onClick={updateSize}>Update</button>
+        </div>
+        <div>
           <button onClick={generateMandala} className={ready ? 'ready' : 'notReady'}>Generate Mandala</button>
           <button onClick={()=>{setAuto(!auto)}} style={auto ? {backgroundColor: '#bdf5c6'} : {backgroundColor: '#ffb7b7'}}>Auto</button>
           <button onClick={downloadImage}>Download</button>
         </div>
+
       </div>
       <div className='mainContainer'>
         <div className="mandalaList">
@@ -291,6 +294,9 @@ const App = function() {
             <small>Reduce size to improve performance.</small>
           </div>
           <div>
+            <br/><br/>
+            --xx--
+            <br/><br/>
             <a href='https://instagram.com/ink.vessels'>ink.vessels</a>
             <br/><br/>
             <small>
