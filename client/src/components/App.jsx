@@ -60,7 +60,7 @@ const App = function() {
   var updatePoints = function() {
     var newPoints = document.getElementById('numPointsInput').value;
 
-    if (Number(newPoints) && newPoints >= 3) {
+    if (Number(newPoints) && newPoints >= 3 && newPoints <= 360) {
       setPoints(newPoints);
       setAngle((360/newPoints)/2);
     } else {
@@ -267,7 +267,7 @@ const App = function() {
         <input type="file" id="imageInput" style={{display: 'none'}} onChange={loadImage}/>
         <div>
           Points:
-          <input type="number" id="numPointsInput" min="3" max="360" defaultValue="5" onChange={updatePoints}/>
+          <input type="tel" id="numPointsInput" defaultValue="5" onChange={updatePoints}/>
           Size:
           <input id="sizeInput" defaultValue={bufferSize}/>
           <button onClick={updateSize}>Update</button>

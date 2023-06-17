@@ -117,6 +117,7 @@ button {
   height: 24px;
   outline: none;
   text-align: center;
+  box-sizing: border-box;
 }
 
 #sizeInput {
