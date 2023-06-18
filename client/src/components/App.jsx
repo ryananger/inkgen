@@ -278,14 +278,14 @@ const App = function() {
           <button className='pointsButton' onClick={()=>{handlePointsButton(-1)}}>-</button>
           <input type="tel" id="numPointsInput" value={points} onChange={updatePoints}/>
           <button className='pointsButton' onClick={()=>{handlePointsButton(1)}}>+</button>
-          Size:&nbsp;
+          &nbsp;Size:&nbsp;
           <input type="tel" id="sizeInput" defaultValue={bufferSize}/>
           <button onClick={updateSize}>Update</button>
         </div>
         <div>
           <button onClick={generateMandala} className={ready ? 'ready' : 'notReady'}>Generate Mandala</button>
           <button onClick={()=>{setAuto(!auto)}} style={auto ? {backgroundColor: '#bdf5c6'} : {backgroundColor: '#ffb7b7'}}>Auto</button>
-          <button onClick={downloadImage}>Download</button>
+          <button id="downloadButton" onClick={downloadImage}>Download</button>
         </div>
 
       </div>
