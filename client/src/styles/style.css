@@ -124,6 +124,14 @@ button {
   box-sizing: border-box;
 }
 
+#uploadButton {
+  width: 120px;
+}
+
+#updateButton, #uploadButton {
+  margin-right: 8px;
+}
+
 .pointsButton {
   width: 24px;
 }
@@ -139,10 +147,6 @@ button {
 }
 
 button:hover {
-  background-color: rgb(189 245 198);
-}
-
-.ready:hover {
   background-color: rgb(189 245 198);
 }
 
@@ -172,6 +176,10 @@ button:hover {
 
   #downloadButton {
     display: none;
+  }
+
+  button:hover {
+    background-color: #fc68ad24;
   }
 
   h2 {

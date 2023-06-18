@@ -280,7 +280,7 @@ const App = function() {
           <button className='pointsButton' onClick={()=>{handlePointsButton(1)}}>+</button>
           &nbsp;Size:&nbsp;
           <input type="tel" id="sizeInput" defaultValue={bufferSize}/>
-          <button onClick={updateSize}>Update</button>
+          <button id="updateButton" onClick={updateSize}>Update</button>
         </div>
         <div>
           <button onClick={generateMandala} className={ready ? 'ready' : 'notReady'}>Generate Mandala</button>
