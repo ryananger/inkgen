@@ -57,14 +57,18 @@ const App = function() {
     link.click();
   };
 
-  var updatePoints = function(num) {
+  var updatePoints = function(e, num) {
     var newPoints = num || Number(document.getElementById('numPointsInput').value);
+
+    console.log(newPoints);
 
     if (!newPoints) {return};
 
     if (newPoints >= 3 && newPoints <= 360) {
       setPoints(newPoints);
       setAngle((360/newPoints)/2);
+
+      document.getElementById('numPointsInput').value = newPoints;
     } else if (newPoints < 1 || newPoints > 2) {
       alert('Please enter a valid number of points (minimum 3).');
     }
@@ -73,7 +77,7 @@ const App = function() {
   var handlePointsButton = function(inc) {
     var newPoints = points + inc;
 
-    updatePoints(newPoints);
+    updatePoints(null, newPoints);
   };
 
   var updateSize = function() {
@@ -276,7 +280,7 @@ const App = function() {
         <div>
           Points:&nbsp;
           <button className='pointsButton' onClick={()=>{handlePointsButton(-1)}}>-</button>
-          <input type="tel" id="numPointsInput" value={points} onChange={updatePoints}/>
+          <input type="tel" id="numPointsInput" defaultValue={points} onChange={updatePoints}/>
           <button className='pointsButton' onClick={()=>{handlePointsButton(1)}}>+</button>
           &nbsp;Size:&nbsp;
           <input type="tel" id="sizeInput" defaultValue={bufferSize}/>
