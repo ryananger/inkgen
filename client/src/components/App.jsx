@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import {BiPlus as Plus,
+        BiMinus as Minus} from 'react-icons/bi';
 
 import '../styles/style.css';
 
@@ -277,16 +279,16 @@ const App = function() {
       <div className="nav">
         <button id="uploadButton" onClick={()=>{document.getElementById('imageInput').click()}}>Load Image</button>
         <input type="file" id="imageInput" style={{display: 'none'}} onChange={loadImage}/>
-        <div>
+        <div id='updateDiv'>
           Points:&nbsp;
-          <button className='pointsButton' onClick={()=>{handlePointsButton(-1)}}>-</button>
+          <Minus size={24} className='pointsButton' onClick={()=>{handlePointsButton(-1)}}/>
           <input type="tel" id="numPointsInput" defaultValue={points} onChange={updatePoints}/>
-          <button className='pointsButton' onClick={()=>{handlePointsButton(1)}}>+</button>
+          <Plus size={24} className='pointsButton' onClick={()=>{handlePointsButton(1)}}/>
           &nbsp;Size:&nbsp;
           <input type="tel" id="sizeInput" defaultValue={bufferSize}/>
           <button id="updateButton" onClick={updateSize}>Update</button>
         </div>
-        <div>
+        <div id='generateDiv'>
           <button onClick={generateMandala} className={ready ? 'ready' : 'notReady'}>Generate Mandala</button>
           <button onClick={()=>{setAuto(!auto)}} style={auto ? {backgroundColor: '#bdf5c6'} : {backgroundColor: '#ffb7b7'}}>Auto</button>
           <button id="downloadButton" onClick={downloadImage}>Download</button>

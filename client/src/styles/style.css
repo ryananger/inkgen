@@ -95,7 +95,6 @@ body {
 .nav {
   display: flex;
   flex: auto;
-  align-items: baseline;
   margin: 4px;
   margin-bottom: 12px;
 }
@@ -112,8 +111,13 @@ a {
   color: #8f5861;
 }
 
+#updateDiv, #generateDiv {
+  display: flex;
+  align-items: center;
+}
+
 input,
-button {
+button, .pointsButton {
   font-family: Jost, sans-serif;
   border-radius: 8px;
   border: 1px solid #a2737b;
@@ -134,19 +138,20 @@ button {
 
 .pointsButton {
   width: 24px;
+  color: #8f5861;
 }
 
 input {
   width: 48px;
 }
 
-button {
+button, .pointsButton {
   background-color: #fc68ad24;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-button:hover {
+button:hover, .pointsButton:hover {
   background-color: rgb(189 245 198);
 }
 
@@ -178,7 +183,7 @@ button:hover {
     display: none;
   }
 
-  button:hover {
+  button:hover, .pointsButton:hover {
     background-color: #fc68ad24;
   }
 
