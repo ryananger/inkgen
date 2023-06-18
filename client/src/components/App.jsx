@@ -57,8 +57,8 @@ const App = function() {
     link.click();
   };
 
-  var updatePoints = function() {
-    var newPoints = Number(document.getElementById('numPointsInput').value);
+  var updatePoints = function(num) {
+    var newPoints = num || Number(document.getElementById('numPointsInput').value);
 
     if (!newPoints) {return};
 
@@ -68,6 +68,12 @@ const App = function() {
     } else if (newPoints < 1 || newPoints > 2) {
       alert('Please enter a valid number of points (minimum 3).');
     }
+  };
+
+  var handlePointsButton = function(inc) {
+    var newPoints = points + inc;
+
+    updatePoints(newPoints);
   };
 
   var updateSize = function() {
@@ -268,9 +274,11 @@ const App = function() {
         <button id="uploadButton" onClick={()=>{document.getElementById('imageInput').click()}}>Load Image</button>
         <input type="file" id="imageInput" style={{display: 'none'}} onChange={loadImage}/>
         <div>
-          Points:
-          <input type="tel" id="numPointsInput" defaultValue="5" onChange={updatePoints}/>
-          Size:
+          Points:&nbsp;
+          <button className='pointsButton' onClick={()=>{handlePointsButton(-1)}}>-</button>
+          <input type="tel" id="numPointsInput" value={points} onChange={updatePoints}/>
+          <button className='pointsButton' onClick={()=>{handlePointsButton(1)}}>+</button>
+          Size:&nbsp;
           <input type="tel" id="sizeInput" defaultValue={bufferSize}/>
           <button onClick={updateSize}>Update</button>
         </div>

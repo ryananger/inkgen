@@ -124,6 +124,10 @@ button {
   box-sizing: border-box;
 }
 
+.pointsButton {
+  width: 24px;
+}
+
 input {
   width: 48px;
 }
