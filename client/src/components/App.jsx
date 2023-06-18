@@ -58,14 +58,14 @@ const App = function() {
   };
 
   var updatePoints = function() {
-    var newPoints = document.getElementById('numPointsInput').value;
+    var newPoints = Number(document.getElementById('numPointsInput').value);
 
     if (!newPoints) {return};
 
-    if (Number(newPoints) && newPoints >= 3 && newPoints <= 360) {
+    if (newPoints >= 3 && newPoints <= 360) {
       setPoints(newPoints);
       setAngle((360/newPoints)/2);
-    } else {
+    } else if (newPoints < 1 || newPoints > 2) {
       alert('Please enter a valid number of points (minimum 3).');
     }
   };
