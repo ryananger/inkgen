@@ -313,7 +313,9 @@ const App = function() {
             <br/><br/>
             --xx--
             <br/><br/>
-            <a href='https://instagram.com/ink.vessels'>ink.vessels</a>
+            <a href='https://instagram.com/ink.vessels.art'>ink.vessels</a>
+            <br/>
+            <a href='https://inkvessels.art'>shop</a>
             <br/><br/>
             <small>
               I like making things. Sometimes, I like to make things faster so I'll make another thing to make that easier.
