@@ -275,7 +275,7 @@ const App = function() {
 
   return (
     <div className="container">
-      <h2>ink.gen</h2>
+      <h2>inkgen</h2>
       <div className="nav">
         <button id="uploadButton" onClick={()=>{document.getElementById('imageInput').click()}}>Load Image</button>
         <input type="file" id="imageInput" style={{display: 'none'}} onChange={loadImage}/>
@@ -313,9 +313,7 @@ const App = function() {
             <br/><br/>
             --xx--
             <br/><br/>
-            <a href='https://instagram.com/ink.vessels.art'>ink.vessels</a>
-            <br/>
-            <a href='https://inkvessels.art'>shop</a>
+            <a href='https://instagram.com/ink.vessels'>ink.vessels</a>
             <br/><br/>
             <small>
               I like making things. Sometimes, I like to make things faster so I'll make another thing to make that easier.
